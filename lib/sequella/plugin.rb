@@ -42,6 +42,20 @@ module Sequella
 
         desc "clean and then migrate"
         task :reset => [:clean, :migrate]
+
+        desc "Generate migration"
+        task :generate, [:name] => :environment do |t, args|
+          if args[:name].nil?
+            logger.error "Please specify a migration name"
+            exit false
+          end
+
+          file = File.join(Adhearsion.root, "db", "migrations", "#{Time.now.to_i}_#{args[:name]}.rb")
+          File.open(file, 'w') do |f|
+            f.write "Sequel.migration do\n  change do\n\n  end\nend"
+          end
+          logger.info "Created migration #{file}"
+        end
       end
     end
   end
